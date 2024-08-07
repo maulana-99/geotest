@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Geolocation Example</title>
+    <title>Geolocation and Reverse Geocoding</title>
     <script>
         function getLocation() {
             if (navigator.geolocation) {
@@ -16,6 +16,26 @@
             var longitude = position.coords.longitude;
             document.getElementById("location").innerHTML = "Latitude: " + latitude + 
             "<br>Longitude: " + longitude;
+            reverseGeocode(latitude, longitude);
+        }
+
+        function reverseGeocode(latitude, longitude) {
+            var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        var address = data.display_name;
+                        document.getElementById("address").innerHTML = "Nearest Address: " + address;
+                    } else {
+                        alert("No address found");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error fetching address");
+                });
         }
 
         function showError(error) {
@@ -41,6 +61,7 @@
 <h2>Geolocation Example</h2>
 <button onclick="getLocation()">Get My Location</button>
 <p id="location"></p>
+<p id="address"></p>
 
 </body>
 </html>
